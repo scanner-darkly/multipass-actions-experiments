@@ -1,0 +1,33 @@
+name: build firmware
+
+on: [workflow_dispatch]
+
+jobs:
+  package:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        fetch-depth: '0'
+
+    - uses: dawidd6/action-download-artifact@v2
+      with:
+        workflow: build_avr32_tools.yml
+        branch: main
+        name: avr32-tools
+        path: avr32-tools-unpacked
+
+    - name: build_firmware
+      run: |
+        export PATH="$HOME/work/multipass-actions-experiments/multipass-actions-experiments/avr32-tools-unpacked/bin:$PATH"
+        cd multipass/monome_euro/ansible
+        make
+
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ansible
+        path: |
+          multipass/monome_euro/ansible/*.hex
+          multipass/monome_euro/ansible/flash.sh
