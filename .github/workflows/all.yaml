@@ -1,0 +1,38 @@
+name: ALL
+
+on: [push, pull_request]
+
+jobs:
+  package:
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: 'recursive'
+        fetch-depth: '0'
+
+    - name: build_avr32_tools
+      run: |
+        sudo apt-get install curl flex bison libgmp3-dev libmpfr-dev autoconf build-essential libncurses5-dev libmpc-dev unzip git
+        git clone https://github.com/scanner-darkly/avr32-toolchain
+        mkdir avr32-tools
+        cd avr32-toolchain
+        PREFIX=$HOME/avr32-tools make install-cross
+        
+    - uses: actions/upload-artifact@v2
+      with:
+        name: avr32-tools
+        path: '~/avr32-tools/**/*'
+
+    - name: build_firmware
+      run: |
+        export PATH="$HOME/avr32-tools/bin:$PATH"
+        cd multipass/monome_euro/ansible
+        make
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ansible
+        path: |
+          multipass/monome_euro/ansible/*.hex
+          multipass/monome_euro/ansible/flash.sh
