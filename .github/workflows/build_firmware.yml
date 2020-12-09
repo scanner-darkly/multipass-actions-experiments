@@ -12,16 +12,16 @@ jobs:
         submodules: 'recursive'
         fetch-depth: '0'
 
-    - uses: dawidd6/action-download-artifact@v2
-      with:
-        workflow: build_avr32_tools.yml
-        branch: main
-        name: avr32-tools
-        path: avr32-tools-unpacked
-
     - name: build_firmware
       run: |
-        export PATH="$HOME/work/multipass-actions-experiments/multipass-actions-experiments/avr32-tools-unpacked/bin:$PATH"
+        pushd $HOME
+        git clone https://github.com/monome/avr32-toolchain-linux.git deps/avr32-toolchain-linux
+        cd deps/avr32-toolchain-linux
+        tar xvfz avr32-gnu-toolchain-3.4.3.820-linux.any.x86_64.tar.gz
+        mv avr32-gnu-toolchain-linux_x86_64 $HOME/avr32-tools
+        unzip avr32-headers-6.2.0.742.zip -d $HOME/avr32-tools/avr32/include
+        popd
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/ansible
         make
 

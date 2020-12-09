@@ -70,7 +70,7 @@ void process_event(u8 event, u8 *data, u8 length) {
             break;
         
         case GRID_KEY_PRESSED:
-            set_grid_led(data[0], data[1], data[2] ? 15 : 0);
+            set_grid_led(data[0], data[1], data[2] ? data[0] + data[1] : 0);
             refresh_grid();
             break;
     
