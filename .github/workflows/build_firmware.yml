@@ -24,11 +24,11 @@ jobs:
         mv avr32-gnu-toolchain-linux_x86_64 $HOME/avr32-tools
         unzip avr32-headers-6.2.0.742.zip -d $HOME/avr32-tools/avr32/include
         popd
-        PATH="$HOME/avr32-tools/bin:$PATH"
         
     - name: build_ansible
       if: matrix.module == 'ansible'
       run: |
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/ansible
         find ../../.. -name '*.o' -delete
         make
@@ -36,6 +36,7 @@ jobs:
     - name: build_teletype
       if: matrix.module == 'teletype'
       run: |
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/teletype
         find ../../.. -name '*.o' -delete
         make
@@ -43,6 +44,7 @@ jobs:
     - name: build_earthsea
       if: matrix.module == 'earthsea'
       run: |
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/earthsea
         find ../../.. -name '*.o' -delete
         make
@@ -50,6 +52,7 @@ jobs:
     - name: build_meadowphysics
       if: matrix.module == 'meadowphysics'
       run: |
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/meadowphysics
         find ../../.. -name '*.o' -delete
         make
@@ -57,6 +60,7 @@ jobs:
     - name: build_whitewhale
       if: matrix.module == 'whitewhale'
       run: |
+        PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/whitewhale
         find ../../.. -name '*.o' -delete
         make
