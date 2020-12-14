@@ -3,11 +3,11 @@ name: build firmware
 on: [workflow_dispatch]
 
 jobs:
-  package:
+  build:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        module: [ansible, teletype, earthsea, meadowphysics]
+        module: [ansible, whitewhale, earthsea, meadowphysics]
 
     steps:
     - uses: actions/checkout@v2
