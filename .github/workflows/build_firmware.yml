@@ -122,4 +122,5 @@ jobs:
     steps:
     - name: get latest release
       id: get_latest_release
-      run: ::set-output name={latest_release}::`git tag | tail -1`
+      run: |
+        ::set-output name={latest_release}::`git tag | tail -1`
