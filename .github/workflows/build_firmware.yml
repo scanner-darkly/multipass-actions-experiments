@@ -113,3 +113,22 @@ jobs:
         path: |
           multipass/monome_euro/whitewhale/*.hex
           multipass/monome_euro/whitewhale/flash.sh
+
+  release:
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: get latest release
+      id: get_latest_release
+      run: ::set-output name={latest_release}::`git tag | tail -1`
+
+    - name: add builds to release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ GITHUB_SERVER_URL }}/${{ GITHUB_REPOSITORY }}/releases/tag/{{ steps.get_latest_release.outputs.latest_release }}
+        asset_path: ./{{ matrix.module }}.zip
+        asset_content_type: application/zip        
