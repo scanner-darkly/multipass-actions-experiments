@@ -131,6 +131,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://github.com/${{ github.repository }}/releases/tag/{{ steps.get_latest_release.outputs.latest_release }}
-        asset_name: {{ matrix.module }}.zip
+        asset_name: test
         asset_path: ./{{ matrix.module }}.zip
         asset_content_type: application/zip        
