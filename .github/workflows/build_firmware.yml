@@ -56,20 +56,15 @@ jobs:
         git describe --tags
         echo ::set-output name=latest_release::$(git describe --tags)
 
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
+    - name: Get release
+      id: get_release
+      uses: bruceadams/get-release@v1.2.2
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: 0.0.18
-        release_name: test URL
-        draft: false
-        prerelease: false
-          
+        GITHUB_TOKEN: ${{ github.token }}
+
     - name: release url
       run: |
-        echo ${{ steps.create_release.outputs.upload_url }}
+        echo ${{ steps.get_release.outputs.upload_url }}
           
     - name: add builds to release
       if: github.event_name == 'release'
