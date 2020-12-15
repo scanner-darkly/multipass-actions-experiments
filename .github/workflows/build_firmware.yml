@@ -29,90 +29,21 @@ jobs:
         unzip avr32-headers-6.2.0.742.zip -d $HOME/avr32-tools/avr32/include
         popd
         
-    - name: build_ansible
+    - name: build_module
       if: matrix.module == 'ansible'
       run: |
         PATH="$HOME/avr32-tools/bin:$PATH"
-        cd multipass/monome_euro/ansible
+        cd multipass/monome_euro/${{matrix.module}}
         find ../../.. -name '*.o' -delete
         make
 
-    - name: build_teletype
-      if: matrix.module == 'teletype'
-      run: |
-        PATH="$HOME/avr32-tools/bin:$PATH"
-        cd multipass/monome_euro/teletype
-        find ../../.. -name '*.o' -delete
-        make
-
-    - name: build_earthsea
-      if: matrix.module == 'earthsea'
-      run: |
-        PATH="$HOME/avr32-tools/bin:$PATH"
-        cd multipass/monome_euro/earthsea
-        find ../../.. -name '*.o' -delete
-        make
-
-    - name: build_meadowphysics
-      if: matrix.module == 'meadowphysics'
-      run: |
-        PATH="$HOME/avr32-tools/bin:$PATH"
-        cd multipass/monome_euro/meadowphysics
-        find ../../.. -name '*.o' -delete
-        make
-
-    - name: build_whitewhale
-      if: matrix.module == 'whitewhale'
-      run: |
-        PATH="$HOME/avr32-tools/bin:$PATH"
-        cd multipass/monome_euro/whitewhale
-        find ../../.. -name '*.o' -delete
-        make
-
-    - name: upload_ansible_build
-      if: matrix.module == 'ansible'
+    - name: upload_build
       uses: actions/upload-artifact@v2
       with:
-        name: ansible
+        name: ${{matrix.module}}
         path: |
-          multipass/monome_euro/ansible/*.hex
-          multipass/monome_euro/ansible/flash.sh
-
-    - name: upload_teletype_build
-      if: matrix.module == 'teletype'
-      uses: actions/upload-artifact@v2
-      with:
-        name: teletype
-        path: |
-          multipass/monome_euro/teletype/*.hex
-          multipass/monome_euro/teletype/flash.sh
-
-    - name: upload_earthsea_build
-      if: matrix.module == 'earthsea'
-      uses: actions/upload-artifact@v2
-      with:
-        name: earthsea
-        path: |
-          multipass/monome_euro/earthsea/*.hex
-          multipass/monome_euro/earthsea/flash.sh
-
-    - name: upload_meadowphysics_build
-      if: matrix.module == 'meadowphysics'
-      uses: actions/upload-artifact@v2
-      with:
-        name: meadowphysics
-        path: |
-          multipass/monome_euro/meadowphysics/*.hex
-          multipass/monome_euro/meadowphysics/flash.sh
-
-    - name: upload_whitewhale_build
-      if: matrix.module == 'whitewhale'
-      uses: actions/upload-artifact@v2
-      with:
-        name: whitewhale
-        path: |
-          multipass/monome_euro/whitewhale/*.hex
-          multipass/monome_euro/whitewhale/flash.sh
+          multipass/monome_euro/${{matrix.module}}/*.hex
+          multipass/monome_euro/${{matrix.module}}/flash.sh
 
   release:
     if: github.event_name == 'release'
