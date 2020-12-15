@@ -29,7 +29,6 @@ jobs:
         popd
         
     - name: build_module
-      if: matrix.module == 'ansible'
       run: |
         PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/${{matrix.module}}
@@ -37,7 +36,19 @@ jobs:
         make
 
     - name: upload_build
+      if: github.event_name != 'release'
       uses: actions/upload-artifact@v2
+      with:
+        name: ${{matrix.module}}
+        path: |
+          multipass/monome_euro/${{matrix.module}}/*.hex
+          multipass/monome_euro/${{matrix.module}}/flash.sh
+
+    - name: zip_build
+      if: github.event_name == 'release'
+      run: |
+        zip ./${{matrix.module}}.zip multipass/monome_euro/${{matrix.module}}/*.hex multipass/monome_euro/${{matrix.module}}/flash.sh
+      
       with:
         name: ${{matrix.module}}
         path: |
