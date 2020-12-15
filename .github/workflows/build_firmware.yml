@@ -50,7 +50,7 @@ jobs:
       run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         echo ::set-output name=hex_file_path::$HEX_FILE_PATH
-        echo ::set-output name=hex_file::basename $HEX_FILE_PATH
+        echo ::set-output name=hex_file::`basename $HEX_FILE_PATH`
         zip -j ./${{matrix.module}}.zip $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
 
     - name: get release
