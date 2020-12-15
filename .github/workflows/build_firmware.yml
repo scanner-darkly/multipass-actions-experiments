@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: [ansible]
+        module: [ansible, teletype, whitewhale, earthsea, meadowphysics]
 
     steps:
     - uses: actions/checkout@v2
