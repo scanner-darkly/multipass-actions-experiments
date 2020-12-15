@@ -49,30 +49,20 @@ jobs:
       run: |
         zip ./${{matrix.module}}.zip multipass/monome_euro/${{matrix.module}}/*.hex multipass/monome_euro/${{matrix.module}}/flash.sh
 
-    - name: get latest release
+    - name: get release
       if: github.event_name == 'release'
-      id: get_latest_release
-      run: |
-        git describe --tags
-        echo ::set-output name=latest_release::$(git describe --tags)
-
-    - name: Get release
       id: get_release
       uses: bruceadams/get-release@v1.2.2
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
-    - name: release url
-      run: |
-        echo ${{ steps.get_release.outputs.upload_url }}
-          
     - name: add builds to release
       if: github.event_name == 'release'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: https://github.com/${{github.repository}}/releases/tag/${{steps.get_latest_release.outputs.latest_release}}
+        upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_name: ${{matrix.module}}
         asset_path: ./${{matrix.module}}.zip
-        asset_content_type: application/zip        
+        asset_content_type: application/zip
