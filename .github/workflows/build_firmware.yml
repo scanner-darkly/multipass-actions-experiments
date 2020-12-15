@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        module: [ansible, teletype, whitewhale, earthsea, meadowphysics]
+        module: [ansible, teletype]
 
     steps:
     - uses: actions/checkout@v2
@@ -48,9 +48,10 @@ jobs:
       if: github.event_name == 'release'
       id: get_release_files_ready
       run: |
-        echo ::set-output name=hex_file::$(echo multipass/monome_euro/${{matrix.module}}/*.hex "$1")
-        zip -j ./${{matrix.module}}.zip ${{steps.get_release_files_ready.outputs.hex_file}} multipass/monome_euro/${{matrix.module}}/flash.sh
-        echo ${{steps.get_release_files_ready.outputs.hex_file}}
+        HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
+        echo ::set-output name=hex_file_path::$HEX_FILE_PATH
+        echo ::set-output name=hex_file::basename $HEX_FILE_PATH
+        zip -j ./${{matrix.module}}.zip $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
 
     - name: get release
       if: github.event_name == 'release'
@@ -78,6 +79,6 @@ jobs:
       with:
         upload_url: ${{ steps.get_release.outputs.upload_url }}
         asset_name: ${{ steps.get_release_files_ready.outputs.hex_file }}
-        asset_path: ${{ steps.get_release_files_ready.outputs.hex_file }}
+        asset_path: ${{ steps.get_release_files_ready.outputs.hex_file_path }}
         asset_content_type: application/octet-stream
         
