@@ -49,8 +49,8 @@ jobs:
       id: get_release_files_ready
       run: |
         echo ::set-output name=hex_file::$(echo multipass/monome_euro/${{matrix.module}}/*.hex "$1")
-        zip -j ./${{matrix.module}}.zip ${{hex_file}} multipass/monome_euro/${{matrix.module}}/flash.sh
-        echo ${{hex_file}}
+        zip -j ./${{matrix.module}}.zip ${{steps.get_release_files_ready.outputs.hex_file}} multipass/monome_euro/${{matrix.module}}/flash.sh
+        echo ${{steps.get_release_files_ready.outputs.hex_file}}
 
     - name: get release
       if: github.event_name == 'release'
