@@ -48,12 +48,6 @@ jobs:
       if: github.event_name == 'release'
       run: |
         zip ./${{matrix.module}}.zip multipass/monome_euro/${{matrix.module}}/*.hex multipass/monome_euro/${{matrix.module}}/flash.sh
-      
-      with:
-        name: ${{matrix.module}}
-        path: |
-          multipass/monome_euro/${{matrix.module}}/*.hex
-          multipass/monome_euro/${{matrix.module}}/flash.sh
 
     - name: get latest release
       if: github.event_name == 'release'
