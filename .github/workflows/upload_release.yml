@@ -54,12 +54,6 @@ jobs:
         echo ::set-output name=hex_file::$HEX_FILE
         echo ::set-output name=zip_file::$ZIP_FILE
         zip -j ./${ZIP_FILE} $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
-        echo wtf1
-        echo $HEX_FILE_PATH
-        echo wtf2
-        echo $HEX_FILE
-        echo wtf3
-        echo $ZIP_FILE
 
     - name: find release
       id: find_release
