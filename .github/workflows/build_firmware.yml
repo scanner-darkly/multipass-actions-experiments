@@ -1,9 +1,24 @@
 name: build firmware
 
+# this workflow builds firmware for selected modules
+# and uploads compiled firmware as artifacts
+
+# specify modules to build for in the matrix module property below
+# possible values are: ansible, teletype, whitewhale, meadowphysics, earthsea
+
+# the workflow has to be triggered manually
+# you can configure it to trigger on other events, like push or pull_request:
+
+#on:
+#  push:
+#    branches: [main]
+
+#on:
+#  pull_request:
+#    types: [opened, reopened]
+
 on:
   workflow_dispatch:
-  release:
-    types: [created]
 
 jobs:
   build:
@@ -18,7 +33,7 @@ jobs:
         submodules: 'recursive'
         fetch-depth: '0'
 
-    - name: build firmware
+    - name: restore toolchain
       run: |
         pushd $HOME
         git clone https://github.com/monome/avr32-toolchain-linux.git deps/avr32-toolchain-linux
@@ -28,7 +43,7 @@ jobs:
         unzip avr32-headers-6.2.0.742.zip -d $HOME/avr32-tools/avr32/include
         popd
         
-    - name: build module
+    - name: build firmware
       run: |
         PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/${{matrix.module}}
@@ -36,49 +51,9 @@ jobs:
         make
 
     - name: upload artifact
-      if: github.event_name != 'release'
       uses: actions/upload-artifact@v2
       with:
         name: ${{matrix.module}}
         path: |
           multipass/monome_euro/${{matrix.module}}/*.hex
           multipass/monome_euro/${{matrix.module}}/flash.sh
-
-    - name: get release files ready
-      if: github.event_name == 'release'
-      id: get_release_files_ready
-      run: |
-        HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
-        echo ::set-output name=hex_file_path::$HEX_FILE_PATH
-        echo ::set-output name=hex_file::`basename $HEX_FILE_PATH`
-        zip -j ./${{matrix.module}}.zip $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
-
-    - name: get release
-      if: github.event_name == 'release'
-      id: get_release
-      uses: scanner-darkly/get-release@f589ce0779c7bef1faf175f7488c972eb47dc046
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-
-    - name: add zip to release
-      if: github.event_name == 'release'
-      uses: scanner-darkly/upload-release-asset@e9f0662bdf9868f4aac644f0eedc2b56567fdba8
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release.outputs.upload_url }}
-        asset_name: ${{matrix.module}}.zip
-        asset_path: ./${{matrix.module}}.zip
-        asset_content_type: application/zip
-
-    - name: add hex to release
-      if: github.event_name == 'release'
-      uses: scanner-darkly/upload-release-asset@e9f0662bdf9868f4aac644f0eedc2b56567fdba8
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.get_release.outputs.upload_url }}
-        asset_name: ${{ steps.get_release_files_ready.outputs.hex_file }}
-        asset_path: ${{ steps.get_release_files_ready.outputs.hex_file_path }}
-        asset_content_type: application/octet-stream
-        
