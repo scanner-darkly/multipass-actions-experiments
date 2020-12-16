@@ -44,16 +44,20 @@ jobs:
         popd
         
     - name: build firmware
+      id: build_firmware
       run: |
         PATH="$HOME/avr32-tools/bin:$PATH"
         cd multipass/monome_euro/${{matrix.module}}
         find ../../.. -name '*.o' -delete
         make
+        HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
+        HEX_FILE=`basename $HEX_FILE_PATH`
+        ZIP_FILE=`echo "${HEX_FILE//hex/zip}"`
 
     - name: upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{matrix.module}}
+        name: ${{ steps.build_firmware.outputs.zip_file }}
         path: |
           multipass/monome_euro/${{matrix.module}}/*.hex
           multipass/monome_euro/${{matrix.module}}/flash.sh
