@@ -50,6 +50,10 @@ jobs:
         cd multipass/monome_euro/${{matrix.module}}
         find ../../.. -name '*.o' -delete
         make
+        
+    - name: prepare files
+      id: prepare_files
+      run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         HEX_FILE=`basename $HEX_FILE_PATH`
         ZIP_FILE=`echo "${HEX_FILE//hex/zip}"`
