@@ -48,9 +48,12 @@ jobs:
       id: prepare_files
       run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
+        HEX_FILE=`basename $HEX_FILE_PATH`
+        ZIP_FILE=`echo "${HEX_FILE//hex/zip}"`
         echo ::set-output name=hex_file_path::$HEX_FILE_PATH
-        echo ::set-output name=hex_file::`basename $HEX_FILE_PATH`
-        zip -j ./${{matrix.module}}.zip $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
+        echo ::set-output name=hex_file::$HEX_FILE
+        echo ::set-output name=zip_file::$ZIP_FILE
+        zip -j ./${ZIP_FILE} $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
 
     - name: find release
       id: find_release
@@ -64,8 +67,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.find_release.outputs.upload_url }}
-        asset_name: ${{matrix.module}}.zip
-        asset_path: ./${{matrix.module}}.zip
+        asset_name: ${{ steps.prepare_files.outputs.zip_file }}
+        asset_path: ./${{ steps.prepare_files.outputs.zip_file }}
         asset_content_type: application/zip
 
     - name: add hex to release
