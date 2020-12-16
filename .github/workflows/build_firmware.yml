@@ -55,7 +55,7 @@ jobs:
       run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         HEX_FILE=`basename $HEX_FILE_PATH`
-        ZIP_FILE=`echo "${HEX_FILE//hex/zip}"`
+        ZIP_FILE=`echo "${HEX_FILE//.hex/}"`
         echo ::set-output name=zip_file::$ZIP_FILE
 
     - name: upload artifact
