@@ -56,11 +56,11 @@ jobs:
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         HEX_FILE=`basename $HEX_FILE_PATH`
         NAMED_FILE=`echo "${HEX_FILE//multipass_/${{github.event.repository.name}}_}"`
-        echo ::set-output name=hex_file_file::$HEX_FILE_PATH
         echo ::set-output name=named_file::$NAMED_FILE
+        mv $HEX_FILE_PATH $NAMED_FILE
 
     - name: upload artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ steps.get_file_name.outputs.named_file }}
-        path: ${{ steps.get_file_name.outputs.hex_file_file }}
+        path: ${{ steps.get_file_name.outputs.named_file }}
