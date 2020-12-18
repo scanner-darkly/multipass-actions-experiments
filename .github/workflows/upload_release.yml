@@ -45,11 +45,13 @@ jobs:
       run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         HEX_FILE=`basename $HEX_FILE_PATH`
-        ZIP_FILE=`echo "${HEX_FILE//hex/zip}"`
+        NAMED_FILE=`echo "${HEX_FILE//multipass_/${{github.event.repository.name}}_}"`
+        ZIP_FILE=`echo "${NAMED_FILE//hex/zip}"`
         echo ::set-output name=hex_file_path::$HEX_FILE_PATH
-        echo ::set-output name=hex_file::$HEX_FILE
+        echo ::set-output name=named_file::$HEX_FILE
         echo ::set-output name=zip_file::$ZIP_FILE
-        zip -j ./${ZIP_FILE} $HEX_FILE_PATH multipass/monome_euro/${{matrix.module}}/flash.sh
+        mv $HEX_FILE_PATH $NAMED_FILE
+        zip -j ${ZIP_FILE} $NAMED_FILE
 
     - name: find release
       id: find_release
@@ -73,6 +75,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.find_release.outputs.upload_url }}
-        asset_name: ${{ steps.prepare_files.outputs.hex_file }}
+        asset_name: ${{ steps.prepare_files.outputs.named_file }}
         asset_path: ${{ steps.prepare_files.outputs.hex_file_path }}
         asset_content_type: application/octet-stream
