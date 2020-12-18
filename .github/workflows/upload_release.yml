@@ -45,6 +45,7 @@ jobs:
         HEX_FILE=`basename $HEX_FILE_PATH`
         NAMED_FILE=`echo "${HEX_FILE//multipass_/${{github.event.repository.name}}_}"`
         ZIP_FILE=`echo "${NAMED_FILE//hex/zip}"`
+        echo ::set-output name=hex_file_path::$HEX_FILE_PATH
         echo ::set-output name=named_file::$NAMED_FILE
         echo ::set-output name=zip_file::$ZIP_FILE
 
@@ -66,8 +67,8 @@ jobs:
 
     - name: prepare files
       run: |
-        mv $HEX_FILE_PATH $NAMED_FILE
-        zip -j $ZIP_FILE $NAMED_FILE flash.sh
+        mv ${{ steps.file_names.outputs.hex_file_path }} ${{ steps.file_names.outputs.named_file }}
+        zip -j ${{ steps.file_names.outputs.zip_file }} ${{ steps.file_names.outputs.named_file }} flash.sh
 
     - name: find release
       id: find_release
