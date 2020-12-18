@@ -48,7 +48,7 @@ jobs:
         NAMED_FILE=`echo "${HEX_FILE//multipass_/${{github.event.repository.name}}_}"`
         ZIP_FILE=`echo "${NAMED_FILE//hex/zip}"`
         mv $HEX_FILE_PATH $NAMED_FILE
-        zip -j ${ZIP_FILE} $NAMED_FILE
+        zip -j $ZIP_FILE $NAMED_FILE
         echo ::set-output name=named_file::$HEX_FILE
         echo ::set-output name=zip_file::$ZIP_FILE
 
