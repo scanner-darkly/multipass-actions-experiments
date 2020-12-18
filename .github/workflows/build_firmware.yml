@@ -9,13 +9,13 @@ name: build firmware
 # the workflow has to be triggered manually
 # you can configure it to trigger on other events, like push or pull_request:
 
-#on:
-#  push:
-#    branches: [main]
+# on:
+#   push:
+#     branches: [main]
 
-#on:
-#  pull_request:
-#    types: [opened, reopened]
+# on:
+#   pull_request:
+#     types: [opened, reopened]
 
 on:
   workflow_dispatch:
@@ -55,13 +55,12 @@ jobs:
       run: |
         HEX_FILE_PATH=`echo multipass/monome_euro/${{matrix.module}}/*.hex "$1"`
         HEX_FILE=`basename $HEX_FILE_PATH`
-        ZIP_FILE=`echo "${HEX_FILE//.hex/}"`
-        echo ::set-output name=zip_file::$ZIP_FILE
+        NAMED_FILE=`echo "${HEX_FILE//multipass_/${{github.event.repository.name}}}"`
+        echo ::set-output name=hex_file_file::$HEX_FILE_PATH
+        echo ::set-output name=named_file::$ZIP_FILE
 
     - name: upload artifact
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ steps.get_file_name.outputs.zip_file }}
-        path: |
-          multipass/monome_euro/${{matrix.module}}/*.hex
-          multipass/monome_euro/${{matrix.module}}/flash.sh
+        name: ${{ steps.get_file_name.outputs.named_file }}
+        path: ${{ steps.get_file_name.outputs.hex_file_file }}
