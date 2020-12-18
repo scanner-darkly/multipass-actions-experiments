@@ -54,16 +54,14 @@ jobs:
       run: |
         echo "dfu-programmer at32uc3b0512 erase" >> flash.sh
         echo "dfu-programmer at32uc3b0512 flash ${{steps.file_names.outputs.named_file}} --suppress-bootloader-mem" >> flash.sh
-        echo "dfu-programmer at32uc3b0512 start"
-        echo >> flash.sh
+        echo "dfu-programmer at32uc3b0512 start" >> flash.sh
 
     - name: create flash command
-      if: matrix.module != 'teletype' && matrix.module != 'teletype'
+      if: matrix.module != 'ansible' && matrix.module != 'teletype'
       run: |
         echo "dfu-programmer at32uc3b0256 erase" >> flash.sh
         echo "dfu-programmer at32uc3b0256 flash ${{steps.file_names.outputs.named_file}} --suppress-bootloader-mem" >> flash.sh
-        echo "dfu-programmer at32uc3b0256 start"
-        echo >> flash.sh
+        echo "dfu-programmer at32uc3b0256 start" >> flash.sh
 
     - name: prepare files
       run: |
