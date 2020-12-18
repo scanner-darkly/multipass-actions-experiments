@@ -49,7 +49,7 @@ jobs:
         ZIP_FILE=`echo "${NAMED_FILE//hex/zip}"`
         mv $HEX_FILE_PATH $NAMED_FILE
         zip -j $ZIP_FILE $NAMED_FILE
-        echo ::set-output name=named_file::$HEX_FILE
+        echo ::set-output name=named_file::$NAMED_FILE
         echo ::set-output name=zip_file::$ZIP_FILE
 
     - name: find release
